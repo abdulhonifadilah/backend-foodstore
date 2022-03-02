@@ -11,10 +11,10 @@ const register = async (req, res, next) => {
     const payload = req.body;
     let user = new User(payload);
     await user.save();
-    return res.json(user);
+    return res.status(200).json(user);
   } catch (err) {
     if (err && err.name === "ValidationError") {
-      return res.json({
+      return res.status(204).json({
         error: 1,
         message: err.message,
         fields: err.errors,
@@ -43,13 +43,13 @@ const localStrategy = async (email, password, done) => {
 const login = async (req, res, next)=>{
 passport.authenticate('local', async function(err, user) {
     if(err) return next(err);
-    if(!user) return res.json({error: 1, message: 'email or password incorect'});
+    if(!user) return res..status(204)json({error: 1, message: 'email or password incorect'});
 
     let signed= jwt.sign(user, config.secretKey);
 
     await User.findByIdAndUpdate(user._id, {$push: {token : signed}})
 
-    res.json({
+    res.status(200).json({
         message: 'Login successfully',
         user: { name : user.full_name, email : user.email, role: user.role},
         token: signed
