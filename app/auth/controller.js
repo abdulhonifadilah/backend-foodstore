@@ -29,7 +29,7 @@ const localStrategy = async (email, password, done) => {
     let user = await User.findOne({ email }).select(
       "-__v -createdAt -updatedAt -cart_items -token"
     );
-    if (!user) return done();
+    if (!user) return res.status(200).json({error: 1, message: 'email tidak ditemukan'})
     if (bcrypt.compareSync(password, user.password)) {
       ({ user, ...userWithoutPassword } = user.toJSON());
       return done(null, userWithoutPassword);
@@ -43,7 +43,7 @@ const localStrategy = async (email, password, done) => {
 const login = async (req, res, next)=>{
 passport.authenticate('local', async function(err, user) {
     if(err) return next(err);
-    if(!user) return res.status(200).json({error: 1, message: 'email or password incorect', form:{email: req.body.email}});
+    if(!user) return res.status(200).json({error: 1, message: 'email or password incorect'});
 
     let signed= jwt.sign(user, config.secretKey);
 
