@@ -30,10 +30,10 @@ const update = async(req, res, next)=>{
                 }
             }
         }))
-        return res.json(cartItems);
+        return res.status(200).json(cartItems);
     } catch (err) {
         if(err && err.name === 'ValidationError'){
-            return res.json({
+            return res.status(200).json({
                 error: 1,
                 message: err.message,
                 fields : err.errors
@@ -47,10 +47,10 @@ const update = async(req, res, next)=>{
 const index = async (req, res, next)=>{
     try {
         let items = await CartItem.find({user: req.user._id}).populate('product');
-        return res.json(items);
+        return res.status(200).json(items);
     } catch (err) {
         if(err && err.name === 'ValidationError'){
-            return res.json({
+            return res.status(200).json({
                 error: 1,
                 message: err.message,
                 fields : err.errors

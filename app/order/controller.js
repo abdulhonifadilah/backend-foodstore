@@ -9,7 +9,7 @@ const store = async(req, res, next)=>{
         let {delivery_fee, delivery_address}= req.body;
         let items = await CartItem.find({user: req.user._id}).populate('product');
         if(!items){
-            return res.json({
+            return res.status(200).json({
                 error: 1,
                 message: 'you are not create order because you have not items in cart'
             })
@@ -39,10 +39,10 @@ const store = async(req, res, next)=>{
         orderItems.forEach(item=> order.order_items.push(item));
         order.save();
         await CartItem.deleteMany({user:req.user._id});
-        return res.json(order);
+        return res.status(200).json(order);
     } catch (err) {
         if (err && err.name === "ValidationError") {
-            return res.json({
+            return res.status(200).json({
               erros: 1,
               message: err.message,
               fields: err.errors,
@@ -54,20 +54,20 @@ const store = async(req, res, next)=>{
 
 const index = async(req, res, next)=>{
     try {
-        let {skip=0, limit = 10}= req.query;
+        // let {skip=0, limit = 10}= req.query;
         let count = await Order.find({user: req.user_id}).countDocuments();
         let orders = await Order.find({user: req.user._id})
-        .skip(parseInt(skip))
-        .limit(parseInt(limit))
+        // .skip(parseInt(skip))
+        // .limit(parseInt(limit))
         .populate('order_items')
         .sort('-createdAt');
-        return res.json({
+        return res.status(200).json({
             data : orders.map(order=> order.toJSON({virtuals: true})),
             count
         })
     } catch (err) {
         if (err && err.name === "ValidationError") {
-            return res.json({
+            return res.status(200).json({
               erros: 1,
               message: err.message,
               fields: err.errors,
@@ -85,10 +85,10 @@ const show = async(req, res, next)=>{
         let orders = await Order.findById(id)
         .populate('order_items')
         .sort('-createdAt');
-        return res.json(orders)
+        return res.status(200).json(orders)
     } catch (err) {
         if (err && err.name === "ValidationError") {
-            return res.json({
+            return res.status(200).json({
               erros: 1,
               message: err.message,
               fields: err.errors,

@@ -9,7 +9,7 @@ const index = async (req, res, next) => {
     if (user.role === "user") {
       address = await DeliveryAddress.find({ user: user._id });
     }
-    return res.json(address);
+    return res.status(200).json(address);
   } catch (err) {
     next(err);
   }
@@ -22,10 +22,10 @@ const store = async (req, res, next) => {
     let user = req.user;
     let address = new DeliveryAddress({ ...payload, user: user._id });
     await address.save();
-    return res.json(address);
+    return res.status(200).json(address);
   } catch (err) {
     if (err && err.name === "ValidationError") {
-      return res.json({
+      return res.status(200).json({
         error: 1,
         message: err.message,
         fileds: err.errors,
@@ -46,7 +46,7 @@ const update = async (req, res, next) => {
     });
     let policy = policyfor(req.user);
     if (!policy.can("update", subjectAddress)) {
-      return res.json({
+      return res.status(200).json({
         error: 1,
         message: `you are not allowed to ${action} ${subject}`,
       });
@@ -54,10 +54,10 @@ const update = async (req, res, next) => {
     address = await DeliveryAddress.findByIdAndUpdate(id, payload, {
       new: true,
     });
-    return res.json(address);
+    return res.status(200).json(address);
   } catch (err) {
     if (err && err.name === "ValidationError") {
-      return res.json({
+      return res.status(200).json({
         erros: 1,
         message: err.message,
         fields: err.errors,
@@ -83,7 +83,7 @@ const destroy = async (req, res, next) => {
       });
     }
     address = await DeliveryAddress.findByIdAndDelete(id);
-    return res.json({ status: "success", address });
+    return res.status(200).json({ status: "success", address });
   } catch (err) {
     next(err);
   }

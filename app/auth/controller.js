@@ -63,12 +63,12 @@ const logout = async (req, res,next)=>{
     let user = await User.findOneAndUpdate({token : {$in:[token]}}, {$pull : {token: token}}, {useFindAndModify: false});
 
     if(!token || !user){
-        res.json({
+        res.status(200).json({
             error: 1,
             message: 'No User Found'
         });
     }
-    return res.json({
+    return res.status(200).json({
         error: 0,
         message: 'logout berhasil'
     });
@@ -77,12 +77,12 @@ const logout = async (req, res,next)=>{
 
 const me = (req, res, next)=>{
     if(!req.user){
-        res.json({
+        res.status(200).json({
             error: 1,
             message: 'you are not login or token expired'
         })
     }
-    res.json(req.user)
+    res.status(200).json(req.user)
 }
 
 module.exports = { register, login, localStrategy, logout ,me };

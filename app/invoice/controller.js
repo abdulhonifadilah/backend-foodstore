@@ -12,7 +12,7 @@ const show = async (req, res, next) => {
       user_id: invoice.user,
     });
     if (!policy.can("read", subjectInvoice)) {
-      return res.json({
+      return res.status(200).json({
         error: 1,
         message: "anda tidak memiliki akses untuk melihat invoice ini",
       });
@@ -20,9 +20,9 @@ const show = async (req, res, next) => {
     invoice = await Invoice.find({ order: order_id })
       .populate("order")
       .populate("user");
-    return res.json(invoice);
+    return res.status(200).json(invoice);
   } catch (err) {
-    return res.json({
+    return res.status(200).json({
       error: 1,
       message: "Error when getting invoice",
     });
@@ -38,9 +38,10 @@ const index = async (req, res, next) => {
         .populate("order")
         .populate("user");
     }
-    return res.json(invoice)
+    return res.status(200).json(invoice)
   } catch (err) {
-    return res.json({
+    return res.status(200)
+    .json({
       error: 1,
       message: "Error when getting invoice",
     });

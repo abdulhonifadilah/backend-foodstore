@@ -7,7 +7,7 @@ const Tag = require('../tag/model')
 
 const index = async (req, res, next) => {
   try {
-    let {skip = 0, limit = 10,q= '', category='',tags=[]} = req.query;
+    let {q= '', category='',tags=[]} = req.query;
     let criteria ={};
     if(q.length){
       criteria={...criteria, name: {$regex: `${q}`, $options: 'i'}}
@@ -17,7 +17,7 @@ const index = async (req, res, next) => {
       if(resultCategory){
         criteria= {...criteria, category: resultCategory._id}
       }
-      console.log(resultCategory._id)
+      // console.log(resultCategory._id)
     }
     if(tags.length){
       let tagsResult= await Tag.find({name: {$in: tags}});
@@ -27,9 +27,8 @@ const index = async (req, res, next) => {
     }
     let count = await Product.find().countDocuments();
 
-    let product = await Product.find(criteria).skip(parseInt(skip)).limit(parseInt(limit))
-    .populate('category').populate('tags');
-    return res.json({
+    let product = await Product.find(criteria).populate('category').populate('tags');
+    return res.status(200).json({
       data: product,
       count
     });
@@ -80,7 +79,7 @@ const store = async (req, res, next) => {
         try {
           let product = new Product({ ...payload, image_url: filename });
           await product.save();
-          return res.json(product);
+          return res.status(200).json(product);
         } catch (err) {
           fs.unlinkSync(target_path);
           if (err && err.name === "ValidationError") {
@@ -99,11 +98,11 @@ const store = async (req, res, next) => {
     } else {
       let product = new Product(payload);
       await product.save();
-      return res.json(product);
+      return res.status(200).json(product);
     }
   } catch (err) {
     if (err && err.name === "ValidationError") {
-      return res.json({
+      return res.status(200).json({
         error: 1,
         message: err.message,
         fileds: err.errors,
@@ -168,7 +167,7 @@ const update = async (req, res, next) => {
               runValidators: true,
             }
           );
-          return res.json(product);
+          return res.status(200).json(product);
         } catch (err) {
           fs.unlinkSync(target_path);
           if (err && err.name === "ValidationError") {
@@ -189,11 +188,11 @@ const update = async (req, res, next) => {
         new: true,
         runValidators: true,
       });
-      return res.json(product);
+      return res.status(200).json(product);
     }
   } catch (err) {
     if (err && err.name === "ValidationError") {
-      return res.json({
+      return res.status(200).json({
         error: 1,
         message: err.message,
         fileds: err.errors,
@@ -210,7 +209,17 @@ const destroy = async (req, res, next) => {
     if (fs.existsSync(currentImage)) {
       fs.unlinkSync(currentImage);
     }
-    res.json(product)
+    res.status(200)
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    .json(product)
   } catch (err) {}
   next(err);
 };
